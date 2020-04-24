@@ -1,14 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import {editLine, removeLine} from "../../actions";
+import {connect} from "react-redux";
 
-class LinesTable extends React.Component {
+class Table extends React.Component {
     constructor(props) {
         super(props);
 
         this.editingTr = null;
 
         this.state = {
-            editingId: 0,
+            editingId:      0,
             errorOnEditing: false
         };
     }
@@ -34,7 +36,7 @@ class LinesTable extends React.Component {
                     <td>
                         {
                             parseFloat(line.amount).toLocaleString('fr-FR', {
-                                style: "currency",
+                                style:    "currency",
                                 currency: "EUR"
                             })
                         }
@@ -59,49 +61,40 @@ class LinesTable extends React.Component {
                     </td>
                 </tr>
             )
-        }
-        else {
+        } else {
             return (
-                <tr key={line.id} ref={tr => {
-                    this.editingTr = tr;
-                }}>
+                <tr key={line.id} ref={tr => this.editingTr = tr}>
                     <td>
-                        <input className="form-control" name="date" required onKeyDown={(e) => {
-                            this.onKeyDown(e, line.id);
-                        }} onChange={(e) => {
+                        <input className="form-control" name="date" required
+                               onKeyDown={(e) => this.onKeyDown(e, line.id)} onChange={(e) => {
                             this.onChange(e, 'date');
                         }} defaultValue={line.date}/>
                         <div className="invalid-feedback"/>
                     </td>
                     <td>
-                        <input className="form-control" name="amount" required onKeyDown={(e) => {
-                            this.onKeyDown(e, line.id)
-                        }} onChange={(e) => {
+                        <input className="form-control" name="amount" required
+                               onKeyDown={(e) => this.onKeyDown(e, line.id)} onChange={(e) => {
                             this.onChange(e, 'number')
                         }} defaultValue={line.amount}
                                placeholder="Montant en euros"/>
                         <div className="invalid-feedback"/>
                     </td>
                     <td>
-                        <input className="form-control" name="label" required onKeyDown={(e) => {
-                            this.onKeyDown(e, line.id)
-                        }} onChange={(e) => {
+                        <input className="form-control" name="label" required
+                               onKeyDown={(e) => this.onKeyDown(e, line.id)} onChange={(e) => {
                             this.onChange(e, 'label')
                         }} defaultValue={line.label}/>
                         <div className="invalid-feedback"/>
                     </td>
                     <td>
-                        <select name="type" className="custom-select" onKeyDown={(e) => {
-                            this.onKeyDown(e, line.id)
-                        }} defaultValue={line.type}>
+                        <select name="type" className="custom-select" onKeyDown={(e) => this.onKeyDown(e, line.id)}
+                                defaultValue={line.type}>
                             <option value="0">Débit</option>
                             <option value="1">Crédit</option>
                         </select>
                     </td>
                     <td>
-                        <select name="categoryId" className="custom-select" onKeyDown={(e) => {
-                            this.onKeyDown(e, line.id)
-                        }} defaultValue={line.categoryId}>
+                        <select name="categoryId" className="custom-select" onKeyDown={(e) => this.onKeyDown(e, line.id)} defaultValue={line.categoryId}>
                             {
                                 this.renderCategories()
                             }
@@ -217,8 +210,7 @@ class LinesTable extends React.Component {
                     this.setState({
                         errorOnEditing: !!hasError
                     });
-                }
-                else {
+                } else {
                     target.classList.add('is-invalid');
                     target.nextElementSibling.innerHTML = 'Problème de date !';
                     this.setState({
@@ -236,8 +228,7 @@ class LinesTable extends React.Component {
                     this.setState({
                         errorOnEditing: !!hasError
                     });
-                }
-                else {
+                } else {
                     target.classList.add('is-invalid');
                     target.nextElementSibling.innerHTML = 'Problème de montant !';
                     this.setState({
@@ -255,8 +246,7 @@ class LinesTable extends React.Component {
                     this.setState({
                         errorOnEditing: !!hasError
                     });
-                }
-                else {
+                } else {
                     target.classList.add('is-invalid');
                     target.nextElementSibling.innerHTML = 'Problème de libellé !';
                     this.setState({
@@ -279,13 +269,35 @@ class LinesTable extends React.Component {
 
 }
 
-LinesTable.propTypes = {
-    lines: PropTypes.object.isRequired,
-    account: PropTypes.object.isRequired,
+Table.propTypes = {
+    lines:      PropTypes.object.isRequired,
+    account:    PropTypes.object.isRequired,
     categories: PropTypes.object.isRequired,
 
     removeLine: PropTypes.func.isRequired,
-    editLine: PropTypes.func.isRequired,
+    editLine:   PropTypes.func.isRequired,
 };
 
-export default LinesTable;
+const mapStateToProps = (state) => {
+    const accountId = state.navigation.accountTab.accountId;
+
+    return {
+        lines:      state.lines,
+        account:    state.defaultDatas.accounts[accountId],
+        categories: state.categories,
+    }
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        removeLine: (id, accountId) => {
+            dispatch(removeLine(id, accountId));
+        },
+        editLine:   (id, line, accountId) => {
+            dispatch(editLine(id, line, accountId));
+        }
+    };
+};
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(Table);

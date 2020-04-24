@@ -1,6 +1,6 @@
 import React from 'react';
-import CategoriesTable from '../../containers/Category/CategoriesTable';
-import AddCategory from '../../containers/Category/AddCategory';
+import CategoriesTable from './CategoriesTable';
+import AddCategory from './AddCategory';
 
 
 class Main extends React.Component {

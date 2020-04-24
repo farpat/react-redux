@@ -1,5 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import {addLine} from "../../actions";
+import {connect} from "react-redux";
 
 class AddLine extends React.Component {
     constructor(props) {
@@ -162,4 +164,20 @@ AddLine.propTypes = {
     addLine: PropTypes.func.isRequired,
 };
 
-export default AddLine;
+const mapStateToProps = (state) => {
+    return {
+        lastLineId: state.defaultDatas.lastLineId,
+        accountId: state.navigation.accountTab.accountId,
+        categories: state.categories,
+    };
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        addLine: (line, accountId, lastLineId) => {
+            dispatch(addLine(line, accountId, lastLineId));
+        }
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddLine);

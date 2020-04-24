@@ -3,12 +3,20 @@ import {CHANGE_ACCOUNT, CHANGE_CUSTOMER, CHANGE_TAB} from "../actions";
 export default (state = {}, action) => {
     switch (action.type) {
         case CHANGE_TAB:
-            return Object.assign({}, state, {currentTab: action.tab});
+            return {
+                ...state,
+                currentTab: action.tab
+            };
         case CHANGE_CUSTOMER:
-            return Object.assign({}, state, {accountTab: {customerId: action.id, accountId: null}});
+            return {
+                ...state,
+                accountTab: {customerId: action.id, accountId: null}
+            };
         case CHANGE_ACCOUNT:
-            const accountTab = Object.assign({}, state.accountTab, {accountId: action.id});
-            return Object.assign({}, state, {accountTab});
+            return {
+                ...state,
+                accountTab: {accountId: action.id, customerId: state.accountTab.customerId}
+            };
         default:
             return state;
     }

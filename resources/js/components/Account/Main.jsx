@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import LinesTable from "../../containers/Account/LinesTable";
-import AddLine from "../../containers/Account/AddLine";
+import Table from "./Table";
+import AddLine from "./AddLine";
+import {changeAccount, changeCustomer} from "../../actions";
+import {connect} from "react-redux";
 
 class Main extends React.Component {
     constructor(props) {
@@ -16,12 +18,11 @@ class Main extends React.Component {
                     {
                         this.props.customers.map((customer) => {
                             const className = 'list-group-item' + (customer.id === this.props.accountTab.customerId ? ' active' : '');
+                            const style = {cursor: 'pointer'};
 
                             return (
-                                <li className={className} style={{cursor: 'pointer'}} key={customer.id}
-                                    onClick={() => {
-                                        this.props.changeCustomer(customer.id)
-                                    }}>
+                                <li className={className} style={style} key={customer.id}
+                                    onClick={() => this.props.changeCustomer(customer.id)}>
                                     {customer.name}
                                 </li>
                             );
@@ -33,7 +34,7 @@ class Main extends React.Component {
     }
 
     renderAccountList() {
-        let customerId = this.props.accountTab.customerId;
+        const customerId = this.props.accountTab.customerId;
 
         if (customerId) {
             const accountsId = this.props.customerAccounts[customerId];
@@ -46,12 +47,11 @@ class Main extends React.Component {
                             accountsId.map((accountId) => {
                                 const className = 'list-group-item' + (this.props.accountTab.accountId === accountId ? ' active' : '');
                                 const account = this.props.accounts[accountId];
+                                const style = {cursor: 'pointer'};
 
                                 return (
-                                    <li className={className} style={{cursor: 'pointer'}} key={account.id}
-                                        onClick={() => {
-                                            this.props.changeAccount(accountId)
-                                        }}>
+                                    <li className={className} style={style} key={account.id}
+                                        onClick={() => this.props.changeAccount(accountId)}>
                                         {account.label}
                                     </li>
                                 );
@@ -69,7 +69,7 @@ class Main extends React.Component {
         if (this.props.accountTab.accountId) {
             return (
                 <section className="mb-5">
-                    <LinesTable/>
+                    <Table/>
                     <AddLine/>
                 </section>);
         }
@@ -96,15 +96,36 @@ class Main extends React.Component {
 }
 
 Main.propTypes = {
-    customers: PropTypes.array.isRequired,
-    accounts: PropTypes.object.isRequired,
+    customers:        PropTypes.array.isRequired,
+    accounts:         PropTypes.object.isRequired,
     customerAccounts: PropTypes.object.isRequired,
-    lines: PropTypes.object.isRequired,
-    accountTab: PropTypes.object.isRequired,
+    lines:            PropTypes.object.isRequired,
+    accountTab:       PropTypes.object.isRequired,
 
 
     changeCustomer: PropTypes.func.isRequired,
-    changeAccount: PropTypes.func.isRequired,
+    changeAccount:  PropTypes.func.isRequired,
 };
 
-export default Main;
+const mapStateToProps = (state) => {
+    return {
+        customers:        state.defaultDatas.customers,
+        accounts:         state.defaultDatas.accounts,
+        customerAccounts: state.defaultDatas.customerAccounts,
+        accountTab:       state.navigation.accountTab,
+        lines:            state.lines
+    };
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        changeCustomer: (id) => {
+            dispatch(changeCustomer(id))
+        },
+        changeAccount:  (id) => {
+            dispatch(changeAccount(id))
+        },
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Main);

@@ -1,5 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import {connect} from "react-redux";
+import {changeTab} from "../actions";
 
 class Nav extends React.Component {
     constructor(props) {
@@ -37,5 +39,18 @@ Nav.propTypes = {
     changeTab: PropTypes.func.isRequired
 };
 
+const mapStateToProps = (state) => {
+    return {
+        currentTab: state.navigation.currentTab
+    };
+};
 
-export default Nav;
+const mapDispatchToProps = (dispatch) => {
+    return {
+        changeTab: (tab) => {
+            dispatch(changeTab(tab))
+        }
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Nav);

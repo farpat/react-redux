@@ -1,5 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import {editCategory, removeCategory} from "../../actions";
+import {connect} from "react-redux";
 
 class CategoriesTable extends React.Component {
     constructor(props) {
@@ -156,4 +158,21 @@ CategoriesTable.propTypes = {
 };
 
 
-export default CategoriesTable;
+const mapStateToProps = (state) => {
+    return {
+        categories: state.categories
+    };
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        removeCategory: (id) => {
+            dispatch(removeCategory(id));
+        },
+        editCategory: (id, label) => {
+            dispatch(editCategory(id, label));
+        }
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(CategoriesTable);

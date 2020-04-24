@@ -7,7 +7,10 @@ export default (state = {}, action) => {
             currentAccountLines = state[action.accountId] || {};
             const id = action.lastLineId + 1;
             accountLines = [...currentAccountLines, Object.assign(action.line, {id})];
-            return Object.assign({}, state, {[action.accountId]: accountLines});
+            return {
+                ...state,
+                [action.accountId]: accountLines
+            };
         case EDIT_LINE:
             accountLines = state[action.accountId].map(function (line) {
                 if (line.id === action.id) {
@@ -15,12 +18,16 @@ export default (state = {}, action) => {
                 }
                 return line;
             });
-            return Object.assign({}, state, {[action.accountId]: accountLines});
+            return {
+                ...state,
+                [action.accountId]: accountLines
+            };
         case REMOVE_LINE:
-            accountLines = state[action.accountId].filter(function (line) {
-                return line.id !== action.id;
-            });
-            return Object.assign({}, state, {[action.accountId]: accountLines});
+            accountLines = state[action.accountId].filter(line => line.id !== action.id);
+            return {
+                ...state,
+                [action.accountId]: accountLines
+            };
         default:
             return state;
     }

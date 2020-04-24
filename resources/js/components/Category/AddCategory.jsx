@@ -1,5 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import {addCategory} from "../../actions";
+import {connect} from "react-redux";
 
 class AddCategory extends React.Component {
     constructor(props) {
@@ -43,4 +45,16 @@ AddCategory.propTypes = {
     addCategory: PropTypes.func.isRequired,
 };
 
-export default AddCategory;
+const mapStateToProps = (state) => {
+    return {};
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        addCategory: (label) => {
+            dispatch(addCategory(label));
+        }
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddCategory);
